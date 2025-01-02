@@ -11,6 +11,6 @@
 - Error handling for invalid flags or invalid arguments
 ## Execution
 - Change file permission using chmod +x monitor_systems.sh or directly use bash to run
-- Run the script using bash monitor_systems.sh
+- Run the script using "bash monitor_systems.sh"
 - by default interval is 10 seconds and report is text
-- You can change it using bash monitor_systems.sh --interval 3 --format json
+- You can change it using "bash monitor_systems.sh --interval 3 --format json"
