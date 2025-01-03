@@ -43,7 +43,7 @@ checkMemoryUsage() {
         fi
         echo $usedPercentage
     else
-        if [ $(echo "$cpuUsage > $threshold" | bc) -eq 1 ]; then
+        if [ "$(echo "$usedPercentage > $threshold" | bc)" -eq 1 ]; then
             echo "Warning! Used Memory Percentage has exceeded $threshold%"
         fi
         echo $(jq -n --arg total "$total" --arg used "$used" --arg free "$free" \
@@ -64,7 +64,7 @@ checkDiskUsage() {
         fi
         echo $diskUsage
     else
-        if [ $(echo "$cpuUsage > $threshold" | bc) -eq 1 ]; then
+        if [ $(echo "$diskUsage > $threshold" | bc) -eq 1 ]; then
             echo "Warning! Disk usage has exceeded $threshold%"
         fi
         echo $(jq -n --arg usage "$diskUsage" --argjson exceeded "$((diskUsage > threshold))" \
@@ -95,8 +95,14 @@ getTopFiveProcesses() {
 appendJson() {
     local timestamp=$(date)
     local cpuData=$(checkCpuUsage)
+    local cpuUsage=$(echo "$cpuData" | jq -r '.cpu_usage.usage')
+    drawGraph $cpuUsage 'CPU'
     local memoryData=$(checkMemoryUsage)
+    local memoryUsage=$(echo "$memoryData" | jq -r '.memory_usage.used_percentage')
+    drawGraph $memoryUsage 'MEMORY'
     local diskData=$(checkDiskUsage)
+    local diskUsage=$(echo "$diskData" | jq -r '.disk_usage.usage')
+    drawGraph $diskUsage 'DISK'
     local topProcesses=$(getTopFiveProcesses)
 
     # Combine all data into a single object
